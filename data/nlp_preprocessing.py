@@ -10,9 +10,10 @@ class Solution:
         # 3. Combine positive + negative into one list of tensors
         # 4. Pad shorter sequences with 0s using nn.utils.rnn.pad_sequence(tensors, batch_first=True)
         sentences = positive + negative
+
         if not sentences:
-            return torch.empty((0, 0), dtypes=torch.float32)
-        
+            return torch.empty([0, 0], dtypes=torch.float32)
+
         vocabulary = sorted({
             word
             for sentence in sentences
@@ -30,7 +31,5 @@ class Solution:
         ]
 
         return nn.utils.rnn.pad_sequence(
-            encoded,
-            batch_first=True,
-            padding_value=0.0
+            encoded, batch_first=True, padding_value=0
         )
