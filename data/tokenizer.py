@@ -1,5 +1,5 @@
-from typing import List, Tuple
-from collections import Counter
+from typing import List, Dict, Tuple
+
 
 class Solution:
     def get_merges(self, corpus: str, num_merges: int) -> List[List[str]]:
@@ -11,40 +11,37 @@ class Solution:
         #    d. Record the merge as [token_a, token_b]
         # 3. Return the list of merges performed
         
-        def get_stats(tokens: List[str]) -> Counter:
-            counts = Counter()
+        def get_stats(tokens: List[str]) -> Dict:
+            counts = {}
             for pair in zip(tokens, tokens[1:]):
-                counts[pair] += 1
+                counts[pair] = counts.get(pair, 0) + 1
             return counts
-
+        
         def merge(tokens: List[str], pair: Tuple[str, str]) -> List[str]:
-            res = []
+            result = []
             i = 0
             while i < len(tokens):
-                if i < len(tokens) and tokens[i] == pair[0] and tokens[i + 1] == pair[1]:
-                    res.append(pair[0] + pair[1])
+                if i < len(tokens) - 1 and tokens[i] == pair[0] and tokens[i + 1] == pair[1]:
+                    result.append(pair[0] + pair[1])
                     i += 2
                 else:
-                    res.append(tokens[i])
+                    result.append(tokens[i])
                     i += 1
-            return res
-            
-                
+            return result
 
-        tokens = list(corpus)
-        res = []
+        chars = list(corpus)
+        ans = []
 
         for _ in range(num_merges):
-            if len(tokens) < 2:
+            if len(chars) < 2:
                 break
-            
-            stats = get_stats(tokens)
-            best_freq = max(stats.values())
-            best_pairs = [pair for pair, freq in stats.items() if freq == best_freq]
 
-            selected = min(best_pairs)
-            res.append([selected[0], selected[1]])
+            stats = get_stats(chars)
+            most_freq = max(stats.values())
+            best_pairs = [pair for pair, freq in stats.items() if freq == most_freq]
+            the_pair = min(best_pairs)
 
-            tokens = merge(tokens, selected)
+            ans.append([the_pair[0], the_pair[1]])
+            chars = merge(chars, the_pair)
+        return ans
 
-        return res
